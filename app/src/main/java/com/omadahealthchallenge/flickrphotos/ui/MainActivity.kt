@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         with (binding.photosGridView) {
-            val spaceBetweenItems = resources.getDimensionPixelSize(R.dimen.margin_small)
+            val spaceBetweenItems = resources.getDimensionPixelSize(R.dimen.margin_normal)
             addItemDecoration(object: ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,

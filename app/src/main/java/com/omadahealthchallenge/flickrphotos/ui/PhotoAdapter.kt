@@ -9,7 +9,7 @@ import com.omadahealthchallenge.flickrphotos.R
 import com.omadahealthchallenge.flickrphotos.data.Photo
 import com.squareup.picasso.Picasso
 
-class PhotoAdapter(val listener: OnPhotoClickListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PhotoAdapter(private val listener: OnPhotoClickListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val photoList = mutableListOf<Photo>()
 
