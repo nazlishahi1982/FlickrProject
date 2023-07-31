@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <dimen name="image_thumbnail_size">72dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <string name="app_name">FlickrPhotos</string>
+    <string name="generic_error_message">Something went wrong. Please try again later.</string>
+    <string name="hint_search">Search</string>
+    <style name="Theme.FlickrPhotos" parent="Theme.AppCompat.DayNight.NoActionBar"/>
+</resources>

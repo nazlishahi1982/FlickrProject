@@ -1,0 +1,28 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color purple_200
+color purple_500
+color purple_700
+color teal_200
+color teal_700
+color white
+dimen image_thumbnail_size
+dimen margin_normal
+dimen margin_small
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id photoView
+id photosGridView
+id progressBar
+id searchEditText
+layout activity_main
+layout view_photo_list_item
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+string generic_error_message
+string hint_search
+style Theme.FlickrPhotos
+xml backup_rules
+xml data_extraction_rules
