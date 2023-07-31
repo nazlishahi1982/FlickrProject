@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omadahealthchallenge.flickrphotos.data.PagedPhotosResponse
+import com.omadahealthchallenge.flickrphotos.data.Photo
 import com.omadahealthchallenge.flickrphotos.data.remote.FlickrRepository
 import kotlinx.coroutines.launch
 
@@ -45,19 +46,11 @@ class FlickrPhotosViewModel(private val repo: FlickrRepository): ViewModel() {
         totalNumberOfPages = pagedPhotosResponse.pages.toInt()
         currentPageNumber = pagedPhotosResponse.page.toInt()
 
-        val photoUrlList = pagedPhotosResponse.photoList.map { photo ->
-            makePhotoUrl(photo.server, photo.id, photo.secret)
-        }
-
         if (currentPageNumber == 1) {
-            photosDisplayState.postValue(PhotosDisplayState.PopulateFirstPagePhotos(photoUrlList))
+            photosDisplayState.postValue(PhotosDisplayState.PopulateFirstPagePhotos(pagedPhotosResponse.photoList))
         } else {
-            photosDisplayState.postValue(PhotosDisplayState.PopulateSubsequentPagePhotos(photoUrlList))
+            photosDisplayState.postValue(PhotosDisplayState.PopulateSubsequentPagePhotos(pagedPhotosResponse.photoList))
         }
-    }
-
-    private fun makePhotoUrl(serverId: String, photoId: String, secret: String): String {
-        return "https://live.staticflickr.com/$serverId/${photoId}_${secret}.jpg"
     }
 
     fun getMorePhotos(text: CharSequence) {
@@ -82,8 +75,8 @@ class FlickrPhotosViewModel(private val repo: FlickrRepository): ViewModel() {
     }
 
     sealed class PhotosDisplayState {
-        data class PopulateFirstPagePhotos(val photoList: List<String>): PhotosDisplayState()
-        data class PopulateSubsequentPagePhotos(val photoList: List<String>): PhotosDisplayState()
+        data class PopulateFirstPagePhotos(val photoList: List<Photo>): PhotosDisplayState()
+        data class PopulateSubsequentPagePhotos(val photoList: List<Photo>): PhotosDisplayState()
         data class Error(val errorMessage: String?): PhotosDisplayState()
     }
 }

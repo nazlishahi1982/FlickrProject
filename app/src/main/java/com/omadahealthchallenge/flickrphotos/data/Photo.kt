@@ -13,4 +13,9 @@ data class Photo(
     @SerializedName("ispublic") val ispublic: Int,
     @SerializedName("isfriend") val isfriend: Int,
     @SerializedName("isfamily") val isfamily: Int
-): Serializable
+): Serializable {
+
+    fun makeUrl(): String {
+        return "https://live.staticflickr.com/$server/${id}_${secret}.jpg"
+    }
+}

@@ -6,19 +6,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.omadahealthchallenge.flickrphotos.R
+import com.omadahealthchallenge.flickrphotos.data.Photo
 import com.squareup.picasso.Picasso
 
-class PhotoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PhotoAdapter(val listener: OnPhotoClickListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val photoList = mutableListOf<String>()
-    private var recyclerView: RecyclerView? = null
+    private val photoList = mutableListOf<Photo>()
 
-    fun populate(list: List<String>) {
+    fun populate(list: List<Photo>) {
         photoList.addAll(list)
         notifyItemRangeInserted(0, photoList.size)
     }
 
-    fun addMoreItems(list: List<String>) {
+    fun addMoreItems(list: List<Photo>) {
         photoList.addAll(list)
         notifyDataSetChanged()
     }
@@ -38,26 +38,21 @@ class PhotoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = photoList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bind(photoList[position])
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        this.recyclerView = recyclerView
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        this.recyclerView = null
+        val viewHolder = holder as ViewHolder
+        val photo = photoList[position]
+        viewHolder.bind(photo)
+        viewHolder.itemView.setOnClickListener {
+            listener.onPhotoClicked(photo)
+        }
     }
 
     private class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-        fun bind(url: String) {
+        fun bind(photo: Photo) {
             val imageView = itemView.findViewById<ImageView>(R.id.photoView)
 
             Picasso.get()
-                .load(url)
+                .load(photo.makeUrl())
                 .into(imageView)
         }
     }

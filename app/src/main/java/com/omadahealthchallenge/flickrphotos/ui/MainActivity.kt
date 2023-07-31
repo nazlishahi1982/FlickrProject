@@ -1,5 +1,6 @@
 package com.omadahealthchallenge.flickrphotos.ui
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
@@ -7,6 +8,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.android.material.snackbar.Snackbar
 import com.omadahealthchallenge.flickrphotos.FlickrPhotosApplication
 import com.omadahealthchallenge.flickrphotos.R
+import com.omadahealthchallenge.flickrphotos.data.Photo
 import com.omadahealthchallenge.flickrphotos.databinding.ActivityMainBinding
 import com.omadahealthchallenge.flickrphotos.viewModel.FlickrPhotosViewModel
 import com.omadahealthchallenge.flickrphotos.viewModel.FlickrPhotosViewModelFactory
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: FlickrPhotosViewModel
 
-    private val photoAdapter = PhotoAdapter()
+    private var photoAdapter: PhotoAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +52,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        photoAdapter = PhotoAdapter(object: OnPhotoClickListener {
+            override fun onPhotoClicked(photo: Photo) {
+                showPhotoDetailsDialog(photo)
+            }
+        })
+
         with (binding.photosGridView) {
             val spaceBetweenItems = resources.getDimensionPixelSize(R.dimen.margin_small)
             addItemDecoration(object: ItemDecoration() {
@@ -69,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             if (action == EditorInfo.IME_ACTION_SEARCH ||
                 (keyEvent != null && keyEvent.action == KeyEvent.ACTION_UP && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 hideKeyboard()
-                photoAdapter.clear()
+                photoAdapter?.clear()
                 viewModel.getInitialPhotos(textView.text)
             }
             return@setOnEditorActionListener true
@@ -89,10 +100,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.photosDisplayState.observe(this) { state ->
             when (state) {
                 is FlickrPhotosViewModel.PhotosDisplayState.PopulateFirstPagePhotos -> {
-                    photoAdapter.populate(state.photoList)
+                    photoAdapter?.populate(state.photoList)
                 }
                 is FlickrPhotosViewModel.PhotosDisplayState.PopulateSubsequentPagePhotos -> {
-                    photoAdapter.addMoreItems(state.photoList)
+                    photoAdapter?.addMoreItems(state.photoList)
                 }
                 is FlickrPhotosViewModel.PhotosDisplayState.Error -> {
                     Snackbar.make(
@@ -115,5 +126,19 @@ class MainActivity : AppCompatActivity() {
         if (currentFocus != null) {
             manager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
+    }
+
+    private fun showPhotoDetailsDialog(photo: Photo) {
+        val dialog = Dialog(this@MainActivity)
+        val view = layoutInflater.inflate(R.layout.view_enlarged_image, binding.root, false)
+        view.findViewById<TextView>(R.id.photoTitleView).text = photo.title
+        view.findViewById<TextView>(R.id.photoIdView).text = photo.id
+        view.findViewById<TextView>(R.id.photoOwnerView).text = photo.owner
+        Picasso.get()
+            .load(photo.makeUrl())
+            .into(view.findViewById<ImageView>(R.id.enlargedImageView))
+
+        dialog.setContentView(view)
+        dialog.show()
     }
 }
